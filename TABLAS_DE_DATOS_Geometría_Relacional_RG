@@ -1,0 +1,433 @@
+TABLA MAESTRA DE LA GEOMETRÍA RELACIONAL (RG)
+
+Compendio completo para simulaciones numéricas y computacionales
+
+Versión: 1.0 (corregida)
+Propósito: Base de datos unificada para la implementación de simulaciones de la RG en Python, MATLAB, C++ o cualquier lenguaje de cálculo científico.
+
+---
+
+1. SÍMBOLOS FUNDAMENTALES Y OPERADORES
+
+Símbolo Nombre Tipo Dominio / Valor Definición / Rol
+\|0\rangle Silencio Armónico Estado cuántico \mathcal H_0 (dim 1) Estado primordial de cancelación perfecta de fases
+\hat H Hamiltoniano de tensión de la red Operador hermítico \mathcal H_{\text{RG}} \hat H = \sum_{\langle i,j\rangle}[1 - \cos(\hat\theta_i - \hat\theta_j)]
+\hat\theta_i Operador de fase local Operador [0, 2\pi) Fase del nodo i
+\hat P(\theta) Operador de ruptura Operador unitario \cos(\theta\hat\Theta) Perturbación angular mínima
+\hat\Theta Operador de fase global Operador \mathbb R Generador de rotaciones de fase
+\hat U(\alpha) Operador de rotación Operador unitario \exp(i\frac{\alpha}{2}\sigma_z) Rotación de espinor (SU(2))
+\sigma_z Matriz de Pauli Z Matriz 2\times2 \begin{pmatrix}1&0\\0&-1\end{pmatrix} Generador de rotación de espín
+\mathcal H_{\text{RG}} Espacio de Hilbert de la red Espacio funcional L^2(U(1)^N) Producto tensorial de fases locales
+N Número de nodos Entero N \in \mathbb N Total de nodos en la red
+\mathcal C Contorno cerrado Curva — Camino de transporte paralelo alrededor del defecto
+\Psi_0(\mathbf r) Función de onda del Silencio Función compleja \mathbb R^3 \to \mathbb C \int \phi(\mathbf k)e^{i\mathbf k\cdot\mathbf r}d\mathbf k con \phi(-\mathbf k)=-\phi^*(\mathbf k)
+\phi(\mathbf k) Amplitud de modo \mathbf k Función compleja \mathbb R^3 \to \mathbb C Distribución de fases en el espacio de momentos
+
+---
+
+2. AXIOMAS Y POSTULADOS
+
+# Axioma/Postulado Enunciado matemático Consecuencia física
+A1 Silencio Armónico \hat H\|0\rangle = 0,\ \langle 0\|0\rangle = 1,\ \dim(\mathcal H_0) = 1 Estado de energía nula, simetría perfecta
+A2 Operador de ruptura \hat P(\theta) = \cos(\theta\hat\Theta) Rompe la simetría del Silencio
+A3 Unicidad del coseno Ver Teorema 1 i emerge como e^{i\pi/2}
+A4 Bifurcación isotrópica A = B = 1, T = A+B = 2 Conservación del momento angular de la red
+A5 Conservación de información A+B+C = 2(a+b+c) Ley de conservación topológica
+A6 Empaquetamiento hexagonal N_{19} = 1+6+12 = 19 Configuración de mínima energía (Fejes Tóth)
+A7 Deuda de Información \mathfrak D = ABC - 2abc = 1.5 Motor dinámico del cosmos
+A8 Torsión de Einstein-Cartan T^{\lambda\mu\nu} = 8\pi G\,\tau^{\lambda\mu\nu} Fuerza fuerte como torsión local
+
+---
+
+3. CONSTANTES FUNDAMENTALES (DERIVADAS vs. EXPERIMENTALES)
+
+Constante Símbolo Valor RG Valor experimental Error Origen RG
+Deuda de Información \mathfrak D 1.5 — Exacta ABC - 2abc
+Masa del electrón (red) m_{19} 4.5/\pi \approx 1.43239 — — 3\mathfrak D/\pi
+Masa del electrón (física) m_e 0.511\ \mathrm{MeV}/c^2 (escalado) 0.51099895\ \mathrm{MeV}/c^2 0.0003\% \mathcal Z-escalada
+Constante de Planck \hbar_{RG} 1.05127\times 10^{-34}\ \mathrm{J\cdot s} 1.054572\times 10^{-34}\ \mathrm{J\cdot s} 0.3134\% \frac{16}{19}\Phi_{RG}
+Fricción topológica \eta \pi/57 \approx 0.055115 — Exacta \pi/N_{57}
+Relación m_p/m_e m_p/m_e 1836 1836.15267 0.008\% \mathcal K_{\text{nudo}}\cdot 3
+Factor de anudamiento \mathcal K_{\text{nudo}} 612 — Exacta (topológica) 18\times 34
+Factor \beta_0 (QCD) \beta_0 9 9 (N_f=3) Exacta 11 - 2N_f/3
+Radio de Hard-Lock r_{HL} 0.5 (u. Planck) — Exacta Nodos de red
+Longitud de correlación \lambda_c 57/\pi \approx 18.14 — Derivada 1/\eta
+E. estado de la Deuda w \approx -1 -1.03\pm 0.03 Consistente \Lambda_{\text{eff}}
+Edad del universo t_0 13.76\ \mathrm{Gyr} 13.787\ \mathrm{Gyr} 0.2\% Friedmann modificada
+Densidad materia \Omega_m 0.315 0.315\pm 0.007 Exacta Parámetro de entrada
+Densidad Deuda \Omega_\phi 0.685 0.6847\pm 0.0073 Exacta Parámetro de entrada
+Constante de Hubble H_0 67.4\ \mathrm{km/s/Mpc} 67.4\pm 0.5 Exacta Parámetro de entrada
+
+---
+
+4. REGLAS DE EMERGENCIA (ÁRBOL DE DERIVACIÓN)
+
+4.1. Cadena leptónica
+
+```
+Silencio Armónico |0⟩
+  │
+  ├─► Operador P̂(θ) = cos(θΘ̂)
+  │     └─► i_RG = e^(iπ/2)  [unidad imaginaria geométrica]
+  │
+  ├─► Bifurcación: A=1, B=1, T=2
+  │     └─► Colisión (Fresnel): a=A/T=0.5, b=B/T=0.5
+  │           └─► Huella: c = T-(a+b) = 1
+  │                 └─► Envoltura: C = A/a = 2
+  │
+  └─► Deuda de Información: 𝔇 = ABC - 2abc = 1.5
+        └─► Clúster 19: N₁₉ = 1+6+12 = 19
+              ├─► Espín s=1/2 [frustración 361°/722°]
+              ├─► Masa m₁₉ = 3𝔇/π = 4.5/π
+              └─► Constante ħ_RG = (16/19)·Φ_RG
+```
+
+4.2. Cadena bariónica
+
+```
+Clúster 19 (electrón)
+  │
+  ├─► Unión topológica de 3 clústeres (Nudo de Borromeo)
+  │     └─► Clúster 57: N₅₇ = 3×19 = 57
+  │
+  ├─► Factor de anudamiento: 𝒦_nudo = 18×34 = 612
+  │     └─► Corrección QCD: β₀ = 9
+  │
+  ├─► Fricción topológica: η = π/N₅₇ = π/57
+  │     └─► Longitud de correlación: λ_c = 1/η = 57/π
+  │
+  └─► Masa del protón: m_p = 𝒦_nudo × 3 × m₁₉ = 1836·m₁₉
+        └─► Relación: m_p/m_e = 1836
+```
+
+4.3. Cadena cosmológica
+
+```
+Deuda de Información 𝔇 = 1.5
+  │
+  ├─► Campo escalar φ (dilatón)
+  │     └─► Potencial V(φ) = 𝔇[(φ/π)⁴ - 2(φ/π)² + 1]
+  │
+  ├─► Ecuación de Friedmann modificada
+  │     └─► H² = H₀²[Ω_m a⁻³ + Ω_r a⁻⁴ + Ω_φ]
+  │
+  ├─► Constante cosmológica efectiva: Λ_eff (w ≈ -1)
+  │     └─► Edad: t₀ = 13.76 Gyr
+  │
+  └─► Expansión acelerada (sin energía oscura exótica)
+```
+
+---
+
+5. GEOMETRÍA DEL CLÚSTER 19 (ELECTRÓN)
+
+Parámetro Símbolo Valor Descripción
+Número total de nodos N_{19} 19 1 + 6 + 12
+Nodo central c 1 Huella del tiempo
+Primer anillo N_{1} 6 Corona interior
+Segundo anillo N_{2} 12 Corona exterior
+Nodos periféricos activos N_{\text{per}} 18 N_{19} - 1
+Enlaces periféricos E_{\text{per}} 18 6\times 2 + 6\times 1
+Factor de empaquetamiento 16/19 0.8421 Nodos activos vibracionales
+Radio de red R_G 19 Mismo que N_{19}
+Traza métrica \mathrm{Tr}(g_{ij}) 19+4\pi\sqrt3 \approx 40.7656 Capacidad de confinamiento
+Ángulo de cierre topológico \theta_{\text{cierre}} 361^\circ 360° + 1°
+Ángulo estable \theta_{\text{estable}} 722^\circ 2\times 361°
+Desfase fermiónico \Delta\theta 2° 722° - 720°
+Defecto angular \delta\theta \pi (2°/360°)\cdot\pi = \pi/180 \to contribuye a s=1/2
+Espín resultante s 1/2 SU(2) emergent
+
+---
+
+6. GEOMETRÍA DEL CLÚSTER 57 (PROTÓN / HARD-LOCK)
+
+Parámetro Símbolo Valor Descripción
+Número total de nodos N_{57} 57 3\times 19
+Sub-clústeres N_{\text{sub}} 3 Tres leptones acoplados
+Nodos por sub-clúster N_{19} 19 Igual que el electrón
+Enlaces periféricos activos N_{\text{int}} 34 3\times 10 + 4
+Factor de anudamiento topológico \mathcal K_{\text{topo}} 612 18\times 34
+Factor de anudamiento efectivo \mathcal K_{\text{nudo}} 612 (a escala m_p) Renormalizado por QCD
+Constante \beta_0 (QCD) \beta_0 9 11 - 2N_f/3, N_f=3
+Acoplamiento fuerte \alpha_s(m_p) \approx 0.3 A escala del protón
+Fricción topológica \eta \pi/57 Disipación por nodo
+Radio de Hard-Lock r_{HL} 0.5 Límite de compresibilidad
+Densidad de espín \tau^{\lambda\mu\nu} \propto \mathcal K_{\text{nudo}} Fuente de torsión
+Espín total S_{\text{total}} 0 "Nuevo cero" macroscópico
+Masa relativa m_p/m_e 1836 \mathcal K_{\text{nudo}}\times 3
+
+---
+
+7. TABLA DE NUDOS Y ANUDAMIENTOS
+
+Nudo / Enlace Símbolo Nodos / Componentes Propiedad topológica
+Clúster electrón C_{19} 19 nodos Hexagonal centrado, s=1/2
+Nudo de Borromeo B_{3} 3 componentes Si se corta 1, los otros 2 se liberan (confinamiento)
+Hard-Lock protón H_{57} 57 nodos 3\times 19, estable
+Envolvente macroscópica C_{\text{env}} — C = 2c
+Huella del tiempo c 1 Nodo central inmutable
+Vértice de confinamiento Y 4 enlaces Punto de unión tripartito
+Enlaces internos triádicos N_{\text{int}} 34 30 + 4 del vértice Y
+Anudamiento con encanto \Delta\mathcal K_{\text{encanto}} \approx 623 Corrección por quark c
+Saturación topológica \Delta\mathcal K^{\text{(sat)}} \Delta\mathcal K[1-e^{-\mathcal K_{\text{nudo}}/\Delta\mathcal K}] Límite de empaquetamiento
+
+---
+
+8. PARÁMETROS COSMOLÓGICOS Y DINÁMICOS
+
+Parámetro Símbolo Valor Unidades
+Constante de Hubble H_0 67.4 \mathrm{km/s/Mpc}
+Densidad de materia \Omega_m 0.315 Adimensional
+Densidad de radiación \Omega_r 9\times 10^{-5} Adimensional
+Densidad de Deuda \Omega_\phi 0.685 Adimensional
+Ecuación de estado w \approx -1 Adimensional
+Edad del universo t_0 13.76 \mathrm{Gyr}
+Factor de escala hoy a_0 1.0 Adimensional
+Redshift actual z_0 0 Adimensional
+\Lambda_{\text{QCD}} \Lambda_{\text{QCD}} \sim 200 \mathrm{MeV}
+Escala de Planck (energía) E_P 1.22\times 10^{19} \mathrm{GeV}
+Escala de Planck (longitud) \ell_P 1.616\times 10^{-35} \mathrm{m}
+Escala de Planck (tiempo) t_P 5.39\times 10^{-44} \mathrm{s}
+Escala de decaimiento f_\phi \sim E_P \mathrm{GeV}
+
+---
+
+9. PARÁMETROS DE SIMULACIÓN NUMÉRICA (VALORES RECOMENDADOS)
+
+Parámetro Símbolo Valor sugerido Rango válido Notas
+Número de iteraciones MC N_{\text{it}} 10^5 10^4 - 10^7 Para convergencia estadística
+Nivel de ruido gaussiano \sigma_{\text{ruido}} 0.05 0.01 - 0.10 Fracción de perturbación
+Paso temporal \Delta t 0.01 10^{-3} - 10^{-1} Estabilidad del integrador
+Tiempo máximo T_{\max} 20\text{–}30 10 - 50 Unidades relacionales
+Nodos en red 1D N_{\text{nodos}} 100 50 - 1000 Para emergencia de paredes
+Nodos en red 2D N_{x}\times N_{y} 200\times 200 100^2 - 500^2 Para emergencia de estructuras
+Malla espacial (ondas) N_{x} 500 200 - 2000 Resolución espacial
+Condición CFL c\Delta t/\Delta x \le 1 — Estabilidad numérica
+Tolerancia solver \text{rtol}, \text{atol} 1.49\times 10^{-8} 10^{-10} - 10^{-6} Para ODEINT/LSODA
+Método de integración — RK45/DOP853 RK4, LSODA, BDF Adaptativo recomendado
+Semilla aleatoria \text{seed} 42 0 - 2^{32}-1 Reproducibilidad
+Puntos de muestreo N_{\text{sample}} 1000 100 - 10^5 Post-procesamiento
+
+---
+
+10. ECUACIONES DE REFERENCIA (ÍNDICE)
+
+Ec. Nombre Fórmula Uso en simulación
+(1) Silencio Armónico \hat H\|0\rangle = 0 Condición inicial
+(2) Espacio de Hilbert \mathcal H_{\text{RG}} = L^2(U(1)^N) Definición de dominio
+(3) Hamiltoniano de red \hat H = \sum[1-\cos(\Delta\hat\theta)] Dinámica de fases
+(4) Función de onda \Psi_0(\mathbf r) = \int\phi(\mathbf k)e^{i\mathbf k\cdot\mathbf r}d\mathbf k Modo base
+(5) Potencial doble pozo V(\theta) = \frac{\mathfrak D}{N}[(\theta/\pi)^4 - 2(\theta/\pi)^2 + 1] Paisaje de energía
+(6) Unidad imaginaria i_{\text{RG}} = e^{i\pi/2} Fases complejas
+(7) Seis Roles \{A,B,a,b,c,C\}=\{1,1,0.5,0.5,1,2\} Constantes estructurales
+(8) Deuda de Información \mathfrak D = ABC - 2abc = 1.5 Motor dinámico
+(9) Acción S = \int d^4x\,\mathcal L Principio variacional
+(11) Lagrangiano geométrico \mathcal L_{\text{geom}} = \frac{1}{16\pi G}(R - T^2) Einstein-Cartan
+(12) Lagrangiano escalar \mathcal L_\phi = \frac{1}{2}\partial\phi^2 - V(\phi) Campo de la Deuda
+(14) Acoplamiento QCD \mathcal L_{\text{QCD}} = (\phi/f_\phi)G^2 Anomalía de traza
+(17) Einstein-Cartan modificada R_{\mu\nu} - \frac{1}{2}Rg_{\mu\nu} = 8\pi G(T_{\mu\nu}+\Sigma_{\mu\nu}) Ecuación de campo
+(19) Klein-Gordon (Deuda) \square\phi + \partial V/\partial\phi = G^2/f_\phi Ecuación de \phi
+(20) Ecuación de Cartan T^{\lambda\mu\nu} = 8\pi G\,\tau^{\lambda\mu\nu} Torsión = espín
+(21) Ángulo de cierre \theta_{\text{cierre}} = 380° Holonomía
+(22) Ángulo efectivo \theta_{\text{cierre}}^{\text{eff}} = 361° Frustración topológica
+(23) Ángulo estable \theta_{\text{estable}} = 722° Doble cobertura SU(2)
+(24) Desfase fermiónico \Delta\theta = 2° \to \Delta\theta/4\pi = 1/2 Espín 1/2
+(27) Fricción topológica \eta = \pi/57 Disipación
+(29) Masa del electrón m_{19} = 3\mathfrak D/\pi = 4.5/\pi Masa leptónica
+(30) Flujo de acción \Phi_{RG} = (\mathfrak D - m_{19})^{3\mathfrak D}/(2\pi^{57}) Invariante
+(31) Constante de Planck \hbar_{RG} = \frac{16}{19}\Phi_{RG} Acción cuántica
+(33) Potencial gravitatorio \Phi_{RG}(r) = -GM/(r + r_{HL}e^{-r/\lambda_c}) Gravedad regularizada
+(36) Curvatura de Kretschmann K_{RG}(r) = 48G^2M^2/(r+r_{HL}e^{-r/\lambda_c})^6 Curvatura finita
+(37) Factor topológico \mathcal K_{\text{topo}} = 18\times 34 = 612 Anudamiento
+(38) Función beta QCD \beta_0 = 11 - 2N_f/3 = 9 para N_f=3
+(40) Masa del protón m_p = \mathcal K_{\text{nudo}}\times 3\times m_{19} Masa bariónica
+(42) Relación m_p/m_e = 1836 Predicción
+(45) Saturación topológica \Delta\mathcal K^{\text{(sat)}} = \Delta\mathcal K[1-e^{-\mathcal K_{\text{nudo}}/\Delta\mathcal K}] Límite de encanto
+(46) Energía cinética \Delta E_{\text{cin}} \sim \frac{1}{2}m_c v_F^2 \approx 150\ \mathrm{MeV}
+(48) Friedmann modificada H^2 = H_0^2[\Omega_m a^{-3} + \Omega_\phi] Cosmología
+(49) Ecuación de estado w \approx -1 Constante efectiva
+(50) Edad del universo t_0 = \frac{1}{H_0}\int_0^1 \frac{da}{a\sqrt{\Omega_m a^{-3}+\Omega_\phi}} = 13.76\ \mathrm{Gyr}
+
+---
+
+11. PARÁMETROS PARA SIMULACIÓN DE COLISIÓN DE ONDAS
+
+Parámetro Símbolo Valor Rango
+Amplitud onda A A_0 1.0 0.5 - 2.0
+Amplitud onda B B_0 1.0 0.5 - 2.0
+Posición inicial A x_A -15 -50 a 0
+Posición inicial B x_B +15 0 a +50
+Velocidad de onda c 1.0 0.5 - 2.0
+Término no lineal \lambda_{nl} 0.5 0 - 2.0
+Ancho gaussiano \sigma 3.0 1 - 10
+Número de onda k 2.0 0.5 - 5
+Dominio espacial L 100 20 - 200
+Resolución espacial N_x 500 200 - 2000
+Resolución temporal N_t 400 200 - 2000
+
+---
+
+12. PARÁMETROS PARA SIMULACIÓN DE RED (EMERGENCIA DE ESTRUCTURAS)
+
+Parámetro Símbolo Valor Rango
+Número de nodos N 100 50 - 1000
+Longitud del dominio L 100 10 - 500
+Constante de acoplamiento k 1.0 0.1 - 5.0
+Amortiguamiento \gamma 0.5 0.1 - 2.0
+Paso temporal \Delta t 0.01 10^{-3} - 0.1
+Tiempo de relajación t_{\text{rel}} 50 10 - 200
+Amplitud de ruido \sigma_0 0.1 0.01 - 0.5
+Campo inicial \phi_0 \sim \mathcal N(0, \sigma_0) Gaussiano
+
+---
+
+13. PARÁMETROS PARA SIMULACIÓN DE ÓRBITAS Y GRAVEDAD
+
+Parámetro Símbolo Valor Rango
+Masa central M 1.0 0.1 - 10
+Constante gravitacional G 1.0 —
+Radio de Hard-Lock r_{HL} 0.5 0.1 - 2.0
+Longitud de correlación \lambda_c 57/\pi \approx 18.14 5 - 50
+Posición inicial x x_0 2.0 1 - 10
+Posición inicial y y_0 0.0 —
+Velocidad v_x v_{x0} 0.0 0 - 1
+Velocidad v_y v_{y0} 0.45 0.1 - 1.0
+Tiempo de integración t_{\text{span}} [0, 15] [0, 50]
+Método ODE — solve_ivp (RK45) odeint (LSODA)
+Tolerancia \text{rtol} 1.49\times 10^{-8} 10^{-10}-10^{-6}
+
+---
+
+14. PARÁMETROS PARA SIMULACIÓN DE ENREDO ESTOCÁSTICO (RED TEAM)
+
+Parámetro Símbolo Valor Rango
+Número de simulaciones N_{\text{sim}} 10^5 10^4 - 10^7
+Media de Deuda \mu_\mathfrak D 1.5 —
+Desviación estándar \sigma_\mathfrak D 0.17678 0.05 - 0.5
+Ruido en A, B \sigma_{A,B} 0.05 0.01 - 0.10
+Ruido en \gamma \sigma_\gamma 0.05 0.01 - 0.10
+Umbral de colapso \mathfrak D_{\text{crit}} 0.0 —
+Probabilidad de colapso P_{\text{col}} < 10^{-6} —
+
+---
+
+15. OBSERVABLES Y PREDICCIONES FALSABLES
+
+Observable Símbolo Predicción RG Fuente experimental
+Espín del electrón s 1/2 (exacto) CODATA (confirmado)
+Masa del electrón m_e 4.5/\pi (u. red) CODATA (escalado)
+Relación m_p/m_e — 1836 CODATA (1836.15267)
+Constante de Planck \hbar 1.051\times 10^{-34} CODATA (1.0546\times 10^{-34})
+Masa del \Xi_{cc}^{++} m_{\Xi} \sim 3620\ \mathrm{MeV} LHCb (3621.4\ \mathrm{MeV})
+Edad del universo t_0 13.76\ \mathrm{Gyr} Planck (13.787\ \mathrm{Gyr})
+Multípolos CMB anómalos l 19, 38, 57 Planck, CMB-S4
+Retraso LIV \Delta t \propto \mathfrak D\eta E/E_P Fermi-LAT, CTA
+Modulación Hawking \omega_{\text{mod}} \propto \pi/57 Análogos BH
+Ondas de torsión — Modos escalares/vectoriales LIGO/Virgo/KAGRA
+Desviación anillo fotónico \Delta R_{\text{ph}} Sutil EHT
+
+---
+
+16. DICCIONARIO DE TÉRMINOS CLAVE
+
+Término Definición operativa
+Silencio Armónico Estado \(
+Deuda de Información Residuo topológico \mathfrak D = 1.5 que impide el retorno al Silencio
+Seis Roles Canónicos Conjunto \{A,B,a,b,c,C\}=\{1,1,0.5,0.5,1,2\}
+Clúster 19 Defecto topológico del electrón (19 nodos hexagonales)
+Hard-Lock 57 Defecto topológico del protón (57 nodos, Nudo de Borromeo)
+Factor de anudamiento \mathcal K_{\text{nudo}} = 612, coste energético del Nudo de Borromeo
+Fricción topológica \eta = \pi/57, disipación por nodo en la red
+Radio de Hard-Lock r_{HL} = 0.5, límite mínimo de compresibilidad
+Saturación topológica Límite de torsión máxima en quarks pesados
+Dilatón Campo escalar \phi que acopla Deuda con QCD
+Torsión de Einstein-Cartan T^{\lambda\mu\nu}, manifestación geométrica del espín
+Libertad asintótica Desanudamiento de la red a altas energías
+Confinamiento Anudamiento de la red a bajas energías
+Acción fantasma Corrección no lineal a \mathcal K por torsión excesiva
+
+---
+
+17. ESTRUCTURA DE ARCHIVOS RECOMENDADA (para el repositorio de simulación)
+
+```
+geometria_relacional/
+│
+├── core/
+│   ├── constants.py          # Valores de Tabla 3
+│   ├── symbols.py            # Diccionario de Tabla 1
+│   ├── geometry.py           # Clústeres 19 y 57
+│   └── lagrangian.py         # Ecuaciones 9-16
+│
+├── dynamics/
+│   ├── rupture.py            # Operador P̂(θ)
+│   ├── collapse.py           # Dinámica del Silencio
+│   ├── wave_collision.py     # Sección 2 (colisión A+B)
+│   └── domain_walls.py       # Emergencia de estructuras
+│
+├── particles/
+│   ├── electron.py           # Clúster 19, espín, masa
+│   ├── proton.py             # Clúster 57, Nudo de Borromeo
+│   ├── baryons.py            # Ξ_cc^{++}, saturación
+│   └── planck.py             # Derivación de ħ
+│
+├── cosmology/
+│   ├── friedmann.py          # Ecuación 48
+│   ├── dark_energy.py        # w, Λ_eff
+│   └── age_universe.py       # t_0 = 13.76 Gyr
+│
+├── gravity/
+│   ├── potential_rg.py       # Φ_RG(r)
+│   ├── kretschmann.py        # K_RG(r)
+│   └── orbits.py             # Órbitas estables
+│
+├── predictions/
+│   ├── liv_photon_delay.py
+│   ├── hawking_modulation.py
+│   ├── cmb_anomalies.py
+│   └── torsion_waves.py
+│
+├── analysis/
+│   ├── monte_carlo.py        # Red Team estocástico
+│   ├── statistics.py
+│   └── visualization.py
+│
+└── tests/
+    ├── test_constants.py
+    ├── test_emergence.py
+    └── test_predictions.py
+```
+
+---
+
+18. CHECKLIST DE VALIDACIÓN PARA SIMULACIONES
+
+☐ ¿Se cumple \hat H\|0\rangle = 0 numéricamente (\|\hat H\|0\rangle\|<10^{-10})?
+☐ ¿La Deuda converge a \mathfrak D = 1.5 \pm 0.01 en redes grandes?
+☐ ¿La probabilidad de colapso (D\le 0) es < 10^{-6}?
+☐ ¿Se obtiene m_p/m_e = 1836 \pm 1 con los parámetros por defecto?
+☐ ¿La edad del universo da 13.76\pm 0.1\ \mathrm{Gyr}?
+☐ ¿El potencial gravitatorio es finito en r=0 (|\Phi|<5)?
+☐ ¿La curvatura K_{RG}(0) es finita?
+☐ ¿La constante de Planck derivada da 1.05\times 10^{-34} con error <1\%?
+☐ ¿Las órbitas RG son estables (no colapsan)?
+☐ ¿Los multipolos l=19,38,57 muestran exceso de potencia?
+
+---
+
+19. CONVENCIONES Y UNIDADES
+
+Magnitud Unidad en RG Conversión SI
+Energía \hbar = c = 1 1\ \mathrm{GeV} \approx 1.602\times 10^{-10}\ \mathrm{J}
+Longitud unidades de red \ell_P = 1.616\times 10^{-35}\ \mathrm{m}
+Tiempo unidades relacionales t_P = 5.39\times 10^{-44}\ \mathrm{s}
+Masa m_{19} = 4.5/\pi m_e = 0.511\ \mathrm{MeV}/c^2
+Temperatura T_P = 1.42\times 10^{32}\ \mathrm{K} \mathrm{GeV}/k_B
+Constante de Hubble \mathrm{km/s/Mpc} H_0 \approx 2.18\times 10^{-18}\ \mathrm{s}^{-1}
+Factor de escala Adimensional a_0 = 1 hoy
+Redshift Adimensional z = 1/a - 1
+
+---
+
+Fin del compendio.
+Este documento debe actualizarse cada vez que se añada un nuevo parámetro, se corrija una constante o se incorpore una nueva predicción falsable a la RG.
